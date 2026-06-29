@@ -5,7 +5,7 @@ Replication and preprocessing-comparison workflow for Bo et al. (2021),
 Cortex." The repository contains scripts and derived result artifacts for
 building a BIDS dataset, running fMRIPrep and DeepPrep, estimating single-trial
 betas, decoding affective scene valence from retinotopic ROIs, validating group
-effects, and generating comparison/QC figures.
+effects, and generating comparison figures.
 
 ## Results At A Glance
 
@@ -68,15 +68,13 @@ The primary ROI set includes `V1v`, `V1d`, `V2v`, `V2d`, `V3v`, `V3d`, `hV4`,
 |   |-- 03_our_spm_results/
 |   |-- 04_papers_results/
 |   |-- plots/
-|   `-- reports/
 `-- scripts/
     |-- 00_preprocessing/
     |-- 01_beta_estimation/
     |-- 02_beta_extraction/
     |-- 03_decoding/
     |-- 04_group_validation/
-    |-- plotting/
-    `-- reporting/
+    `-- plotting/
 ```
 
 ## Included Artifacts
@@ -87,7 +85,6 @@ This repo includes code plus selected derived outputs:
   `results/03_*`
 - Digitized paper Figure 3B estimates in `results/04_papers_results/`
 - Final grouped comparison PNGs in `results/plots/`
-- QC-FC and registration/reporting CSVs and figures in `results/reports/`
 - A copy of the Bo et al. paper in `references/`
 
 Raw imaging data, full preprocessing derivatives, beta images, and large
@@ -143,7 +140,6 @@ unpleasant IAPS trials.
 | 02 | `scripts/02_beta_extraction/` | Extract LSS beta images into condition matrices |
 | 03 | `scripts/03_decoding/` | Run ROI-level SVM decoding and merge subject results |
 | 04 | `scripts/04_group_validation/` | Run group-level permutation/statistical validation |
-| QC | `scripts/reporting/` | Compute SPM-space QC, FC, QC-FC, and registration reports |
 | Plot | `scripts/plotting/` | Generate grouped final comparison figures |
 
 ## Reproducing The Results
@@ -312,7 +308,6 @@ python scripts/plotting/generate_grouped_comparison_plots.py
 
 The command validates its MAT inputs before plotting and writes both contrasts
 for five source combinations to `results/plots/`. Run the group validation and
-QC-FC workflows in Sections 6 and 7 if statistical and preprocessing-quality
 outputs also need to be regenerated.
 
 ## 1. Create A BIDS Dataset
@@ -508,37 +503,7 @@ SLURM wrapper:
 sbatch scripts/04_group_validation/slurm/run_group_validation.sbatch
 ```
 
-## 7. QC-FC And Registration Reports
-
-The reporting workflow compares conformed SPM-space preprocessing outputs across
-pipelines and writes summary CSVs, ROI time series, FC reliability metrics,
-QC-FC metrics, and plots.
-
-Template manifest:
-
-```text
-scripts/reporting/spmspace_qcfc_manifest_template.yaml
-```
-
-Run:
-
-```bash
-python scripts/reporting/spmspace_qcfc_qc.py \
-  --manifest scripts/reporting/spmspace_qcfc_manifest_template.yaml \
-  --output-dir results/reports \
-  --pipelines spm deepprep_spmspace fmriprep_spmspace
-```
-
-Skip FC outputs if you only want run-level image/motion QC:
-
-```bash
-python scripts/reporting/spmspace_qcfc_qc.py \
-  --manifest scripts/reporting/spmspace_qcfc_manifest_template.yaml \
-  --output-dir results/reports \
-  --skip-fc
-```
-
-## 8. Generate Final Comparison Plots
+## 7. Generate Final Comparison Plots
 
 The committed final figures are in `results/plots/`.
 
@@ -576,7 +541,6 @@ check the path constants near the top of the script before running.
   matched-16 cohorts
 - `results/04_papers_results/`: digitized Bo et al. Figure 3B group estimates
 - `results/plots/`: final grouped comparison figures
-- `results/reports/`: QC-FC, registration, reliability, and run-level summaries
 
 ## Notes For Reuse
 
